@@ -2,6 +2,7 @@ using System;
 using Project.Service.Repositories;
 using Project.Service.Abstract;
 using Project.Service.Models;
+using Project.Service.Exceptions;
 
 namespace Project.Service.Managers;
 
@@ -20,7 +21,16 @@ public class VehicleService : IVehicleService
 
   public async Task<VehicleMake?> VehicleMakeById(int id, Boolean includeVehicleModels = true)
   {
-    return await _vehicleMakeRepository.FindById(id, includeVehicleModels);
+    try 
+    {
+      var vehicleMake = await _vehicleMakeRepository.FindById(id, includeVehicleModels);
+      return vehicleMake;
+    }
+    catch (RecordNotFoundException ex)
+    {
+      throw new ServiceException("Record dot found: " + ex.Message);
+    }
+    
   }
 
   // public async Task<List<VehicleMake>?> VehicleMakes(

@@ -43,6 +43,11 @@
         </nav>
     </header>
     <div class="container">
+        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+        {
+            <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+        }
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

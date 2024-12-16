@@ -3,6 +3,7 @@ using Project.Mvc.ViewModels;
 
 // using Project.Mvc.ViewModels;
 using Project.Service.Abstract;
+using Project.Service.Exceptions;
 using Project.Service.Models;
 // using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace Project.Mvc.Controllers
         public async Task<IActionResult> Index([FromQuery] QueryParameters queryParams)
         {
             Console.WriteLine($"=== Page: {queryParams.Page}, PageSize: {queryParams.PageSize}");
-
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
 
             var PagedVehicleMakes = await _vehicleService.VehicleMakesPaged(queryParams);
             var viewModel = new VehicleMakeViewModel
@@ -91,19 +92,29 @@ namespace Project.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Show(int? id)
         {
-            int vehicleMakesCount = await _vehicleService.VehicleMakesCount();
-            if (id == null || vehicleMakesCount == 0)
+            try
             {
-                return NotFound();
+                int vehicleMakesCount = await _vehicleService.VehicleMakesCount();
+                // if (id == null || vehicleMakesCount == 0)
+                // {
+                //     return NotFound();
+                // }
+
+                var vehicleMake = await _vehicleService.VehicleMakeById((int)id);
+
+                if (vehicleMake == null)
+                {
+                    return NotFound();
+                }
+                return View(vehicleMake);
+            }
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = "Error";
+                return RedirectToAction("Index");
             }
 
-            var vehicleMake = await _vehicleService.VehicleMakeById((int)id);
 
-            if (vehicleMake == null)
-            {
-                return NotFound();
-            }
-            return View(vehicleMake);
         }
 
         [HttpPost]
@@ -121,18 +132,26 @@ namespace Project.Mvc.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            int vehicleMakesCount = await _vehicleService.VehicleMakesCount();
-            if (id == null || vehicleMakesCount == 0)
+            try
             {
-                return NotFound();
-            }
+                int vehicleMakesCount = await _vehicleService.VehicleMakesCount();
+                // if (id == null || vehicleMakesCount == 0)
+                // {
+                //     return NotFound();
+                // }
 
-            var vehicleMake = await _vehicleService.VehicleMakeById((int)id);
-            if (vehicleMake == null)
-            {
-                return NotFound();
+                var vehicleMake = await _vehicleService.VehicleMakeById((int)id);
+                if (vehicleMake == null)
+                {
+                    return NotFound();
+                }
+                return View(vehicleMake);
             }
-            return View(vehicleMake);
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = "Error";
+                return RedirectToAction("Index");
+            }
         }
 
         [HttpPost]
@@ -150,8 +169,16 @@ namespace Project.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            await _vehicleService.DeleteVehicleMake(id);
-            return RedirectToAction("Index");
+            try
+            {
+                await _vehicleService.DeleteVehicleMake(id);
+                return RedirectToAction("Index");
+            }
+            catch (ServiceException ex)
+            {
+                TempData["ErrorMessage"] = "Error";
+                return RedirectToAction("Index");
+            }
         }
 
     }

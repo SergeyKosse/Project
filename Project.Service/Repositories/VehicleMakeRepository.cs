@@ -3,6 +3,7 @@ using Project.Service.Models;
 using Microsoft.EntityFrameworkCore;
 using Project.Service.Abstract;
 using Microsoft.Extensions.Options;
+using Project.Service.Exceptions;
 
 namespace Project.Service.Repositories;
 
@@ -29,69 +30,6 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     Console.WriteLine("===total pages count: " + totalPages);
     return totalPages;
   }
-
-  // public async Task<List<VehicleMake>> All(
-  //   int page,
-  //   int pageSize = 0,
-  //   Boolean includeVehicleModels = true,
-  //   Dictionary<string, object>? options = null)
-  // {
-  //   var query = _context.VehicleMakes.AsQueryable().AsNoTracking();
-
-  //   int realPageSize = pageSize > 0 ? pageSize : _pageSize;
-
-  //   // var orderField = (options?.TryGetValue("orderField", out var field) == true 
-  //   // ? field : "Name").ToString();
-
-
-  //   // var orderField = (options?.GetValueOrDefault("orderField", "Name") ?? "Name").ToString();
-  //   var orderField = (string)(options != null
-  //   && options.TryGetValue("orderField", out var field)
-  //   && !string.IsNullOrWhiteSpace((string)field)
-  //   ? field
-  //   : "Name");
-
-  //   Console.WriteLine("===orderfield" + orderField);
-
-  //   if (string.IsNullOrEmpty(orderField))
-  //   {
-  //     throw new ArgumentException("Order field must not be null or empty.");
-  //   }
-
-  //   var ordering = (bool)(options != null
-  //   && options.TryGetValue("orderDir", out var orderDir)
-  //   && !string.IsNullOrWhiteSpace((string)orderDir)
-  //   && (string)orderDir == "asc"
-  //   ? true
-  //   : false);
-
-  //   Console.WriteLine("===orderDir" + ordering);
-
-  //   var filtering = options != null && options.TryGetValue("filter", out var filter) && filter != null
-  //   ? filter.ToString() : null;
-
-  //   if (filtering != null)
-  //   {
-  //     query = query.Where(
-  //       p => EF.Functions.ILike(p.Name, "%" + filtering + "%") ||
-  //       EF.Functions.ILike(p.Abrv, "%" + filtering + "%"));
-  //   }
-
-  //   query = ordering
-  //   ? query.OrderBy(x => EF.Property<object>(x, orderField))
-  //   : query.OrderByDescending(x => EF.Property<object>(x, orderField));
-
-  //   if (includeVehicleModels)
-  //   {
-  //     query.Include(c => c.VehicleModels);
-  //   }
-
-  //   return await query
-  //     .Skip((page - 1) * realPageSize)
-  //     .Take(_pageSize)
-  //     // .OrderBy(orderField, ordering)
-  //     .ToListAsync();
-  // }
 
   public async Task<(List<VehicleMake>, int)> All(
     QueryParameters queryParams,
@@ -139,7 +77,14 @@ public class VehicleMakeRepository : IVehicleMakeRepository
       query = query.Include(c => c.VehicleModels);
     }
 
-    return await query.FirstOrDefaultAsync(p => p.Id == id);
+    var item = await query.FirstOrDefaultAsync(p => p.Id == id);
+
+    if (item == null)
+    {
+      throw new RecordNotFoundException("Record not found");
+    }
+
+    return item; 
   }
 
   public async Task<VehicleMake> Create(VehicleMake vehicleMake)
