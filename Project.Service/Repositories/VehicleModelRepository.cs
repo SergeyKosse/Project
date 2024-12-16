@@ -92,10 +92,19 @@ public class VehicleModelRepository : IVehicleModelRepository
     Console.WriteLine($"abrv: {vehicleModel.Abrv}");
     Console.WriteLine($"vehicleMakeId: {vehicleModel.VehicleMakeId}");
 
-    _context.VehicleModels.Update(vehicleModel);
+    var originalVehicleModel = await FindById(vehicleModel.Id);
+    if (originalVehicleModel == null)
+    {
+      return null;
+    }
+
+    originalVehicleModel.Name = vehicleModel.Name;
+    originalVehicleModel.Abrv = vehicleModel.Abrv;
+    
+    _context.VehicleModels.Update(originalVehicleModel);
 
     await _context.SaveChangesAsync();
-    return vehicleModel;
+    return originalVehicleModel;
   }
 
   public async Task<Boolean> Delete(int id)

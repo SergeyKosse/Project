@@ -20,42 +20,44 @@
         baseUrl, 
         queryParams.ToDictionary(), 
         new Dictionary<string, string>{{"Descending", true.ToString()}});
+
+    var prevPageUrl = "#";
+    var nextPageUrl = "#";
+    
+    if (queryParams.Page > 1)
+    {
+        updatedQueryParams.Page = queryParams.Page - 1;
+        prevPageUrl = Url.BuildUrl(
+            "/VehicleMakes/Index", 
+            queryParams.ToDictionary(), 
+            updatedQueryParams.ToDictionary());
+    }
+
+    if (queryParams.Page < Model.PagedResult.TotalPages)
+    {
+        updatedQueryParams.Page = queryParams.Page + 1;
+        nextPageUrl = Url.BuildUrl(
+            "/VehicleMakes/Index", 
+            queryParams.ToDictionary(), 
+            updatedQueryParams.ToDictionary());
+    }
 }
 
-
-<ul class="pagination">
-    <li class="page-item">
-        <a href="#" class="page-link">Prev</a>
-    </li>
-    @for (int i = 1; i <= Model.PagedResult.TotalPages; i++)
-    {
-        updatedQueryParams.Page = i;
-        var pageUrl = Url.BuildUrl("/VehicleMakes/Index", queryParams.ToDictionary(), updatedQueryParams.ToDictionary());
-        var add_class = i == (int)queryParams.Page ? "fw-bold" : "";
-        
-        <li class="page-item">
-            <a href="@pageUrl" class="page-link @add_class">@i</a>
-        </li>
-    }
-    <li class="page-item">
-        <a href="#" class="page-link">Next</a>
-    </li>
-</ul>
 
 <h1 class="mb-3">Vehicle makes</h1>
 
 <form asp-action="Index" method="get">
-    <div class="input-group mb-5">
+    <div class="input-group mb-3">
         <input type="text" name="filter" value="@queryParams.Filter" class="form-control">
         <input type="submit" name="search" value="Search" class="btn btn-primary">
         <a asp-action="Index" class="btn btn-secondary">Reset</a>
     </div>
 
 </form>
-<div class="mb-3">
-     
-    Ordering: <a href="@asc_url" class="btn btn-primary">A-Z</a>
-    <a href="@desc_url" class="btn btn-primary">Z-A</a>
+
+<div class="mb-5">
+    Ordering: <a href="@asc_url" class="btn btn-primary">ASC</a>
+    <a href="@desc_url" class="btn btn-primary">DESC</a>
 </div>
 
 @foreach (var item in Model.PagedResult.Items)
@@ -76,6 +78,27 @@
 </div>
 }
 
+<ul class="pagination">
+    <li class="page-item">
+        <a href="@prevPageUrl" class="page-link">Prev</a>
+    </li>
+
+    @for (int i = 1; i <= Model.PagedResult.TotalPages; i++)
+    {
+        updatedQueryParams.Page = i;
+        var pageUrl = Url.BuildUrl(
+            "/VehicleMakes/Index", queryParams.ToDictionary(), 
+            updatedQueryParams.ToDictionary());
+        var add_class = i == (int)queryParams.Page ? "fw-bold" : "";
+        
+        <li class="page-item">
+            <a href="@pageUrl" class="page-link @add_class">@i</a>
+        </li>
+    }
+    <li class="page-item">
+        <a href="@nextPageUrl" class="page-link">Next</a>
+    </li>
+</ul>
 
 <div class="text-end">
     <a asp-action="New" class="btn btn-primary">New Record</a>
