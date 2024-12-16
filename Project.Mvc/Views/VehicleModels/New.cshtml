@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@using Project.Mvc.Views
+@model Project.Mvc.ViewModels.VehicleModelViewModel
+
+<h1 class="mb-3">New Vehicle Model for @Model.selectedVehicleMake.Name</h1>
+
+<form action="Create" method="post">
+    <input asp-for="vehicleModel.VehicleMakeId" type="hidden" />
+    <input type="hidden" name="callbackUrl" value="@ViewBag.CallbackUrl">
+    
+
+    <div class="row mb-5">
+        <div class="col-sm-6">
+            <label asp-for="vehicleModel.Name" class="form-label"></label>
+            <input asp-for="vehicleModel.Name" class="form-control" />
+            <span asp-validation-for="vehicleModel.Name"></span>
+        </div>
+
+        <div class="col-sm-6">
+            <label asp-for="vehicleModel.Abrv" class="form-label"></label>
+            <input asp-for="vehicleModel.Abrv" class="form-control" />
+            <span asp-validation-for="vehicleModel.Abrv"></span>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <input type="submit" name="Save" value="Save" class="btn btn-primary">
+        @Html.ActionLink(
+            "Cancel", "Show", "VehicleMakes",
+            new {Id = @Model.vehicleModel.VehicleMakeId},
+            new { @class = "btn btn-secondary" }
+            )
+    </div>
+</form>

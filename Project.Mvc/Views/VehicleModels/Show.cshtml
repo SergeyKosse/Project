@@ -1,0 +1,19 @@
+﻿@model Project.Service.Models.VehicleModel
+
+<h1 class="mb-5">View Vehicle Model</h1>
+
+<div class="mb-3">
+    Make: @Model.VehicleMake?.Name
+    @Model.VehicleMake?.Abrv
+</div>
+
+<div class="mb-5">
+    Model: @Model.Name
+    @Model.Abrv
+</div>
+
+@Html.ActionLink(
+    "Return to list", "Index", "VehicleModels",
+    null,
+    new { @class = "btn btn-secondary" }
+    )

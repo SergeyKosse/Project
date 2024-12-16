@@ -1,0 +1,25 @@
+﻿@model Project.Service.Models.VehicleMake
+
+<h1>New Vehicle Make</h1>
+
+<form action="Create" method="post">
+    <div class="row mb-5">
+<div class="col-sm-6">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name"></span>
+    </div>
+
+    <div class="col-sm-6">
+        <label asp-for="Abrv" class="form-label"></label>
+        <input asp-for="Abrv" class="form-control" />
+        <span asp-validation-for="Abrv"></span>
+    </div>
+    </div>
+    
+
+    <div class="text-end">
+        <input type="submit" name="Save" value="Save" class="btn btn-primary">
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>

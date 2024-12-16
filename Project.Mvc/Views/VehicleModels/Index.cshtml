@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Project.Service.Models.VehicleModel>
+
+<h1 class="mb-5">All Vehicle models</h1>
+
+<form asp-action="Index" method="get">
+    <div class="input-group mb-5">
+        <input type="text" name="filter" value="@ViewBag.filter" class="form-control">
+        <input type="submit" name="search" value="Search" class="btn btn-primary">
+        <a asp-action="Index" class="btn btn-secondary">Reset</a>
+    </div>
+
+</form>
+
+@foreach (var item in Model)
+{
+    <div class="row mb-3">
+    <div class="col-sm-4">@item.VehicleMake?.Name @item.VehicleMake?.Abrv</div>
+    <div class="col-sm-5">@item.Name @item.Abrv</div>
+    <div class="col-sm-3 text-end">
+        <a asp-action="Show" asp-route-id="@item.Id" class="btn btn-primary">View</a>
+        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+        <form asp-action="Delete" asp-controller="VehicleModels" asp-route-id="@item.Id" method="post"
+            onsubmit="return confirm('Are you sure you want to delete this record?');" class="d-inline">
+            <input type="hidden" name="_method" value="DELETE" />
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </div>
+</div>
+}

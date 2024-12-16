@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@model Project.Service.Models.VehicleMake
+
+<h1>Show VehicleMake:: @Model.Name</h1>
+<div class="mb-3">
+    <div class="mb-1">Name: @Model.Name</div>
+
+    <div class="mb-1">Abrv: @Model.Abrv</div>
+</div>
+
+<h4>VehicleModels list</h4>
+
+@foreach (var item in Model.VehicleModels)
+{
+    <div class="row mb-3">
+    <div class="col-sm-4">@item.Name</div>
+    <div class="col-sm-4">@item.Abrv</div>
+</div>
+}
+
+<div class="text-end">
+    @Html.ActionLink(
+            "Add Vehicle Model", "New", "VehicleModels",
+            new { vehicleMakeId = Model.Id, callbackUrl = Context.Request.GetDisplayUrl() },
+            new { @class = "btn btn-primary" }
+            )
+
+    @Html.ActionLink(
+            "Return to Vehicle Makes", "Index", "VehicleMakes",
+            null,
+            new { @class = "btn btn-secondary" }
+            )
+</div>

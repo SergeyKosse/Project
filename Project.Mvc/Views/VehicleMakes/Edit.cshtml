@@ -1,0 +1,31 @@
+﻿@model Project.Service.Models.VehicleMake
+
+<h1>Edit VehicleMake</h1>
+
+<form asp-action="Update" method="post">
+    <input type="hidden" name="_method" value="PUT" />
+    <input asp-for="Id" type="hidden" />
+
+    <div class="row mb-5">
+        <div class="col-sm-6">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name"></span>
+        </div>
+        <div class="col-sm-6">
+            <label asp-for="Abrv" class="form-label"></label>
+            <input asp-for="Abrv" class="form-control" />
+            <span asp-validation-for="Abrv"></span>
+        </div>
+    </div>
+
+    <div class="text-end">
+        <input type="submit" value="Save" class="btn btn-primary">
+        @Html.ActionLink(
+            "Cancel", "Index", "VehicleMakes",
+            null,
+            new { @class = "btn btn-secondary" }
+            )
+    </div>
+
+</form>
